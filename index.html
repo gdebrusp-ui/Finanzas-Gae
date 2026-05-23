@@ -145,15 +145,17 @@ select { width: 160px; padding: 4px 8px; font-size: 13px; border-radius: 8px; bo
 </div>
 
 <script>
+var GEMINI_KEY = 'AIzaSyBg0We3VqKJ7t0bfutSgltEreCMRKfBK3o';
+var GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + GEMINI_KEY;
 var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxMC2-Ew6IWpNPq53dVuGKdIGPp5oBvKyEcjtBE8JOrt2TpKG29uqo5psqrRR6J7-GZKQ/exec';
+
+var CATEGORIAS = 'Ahorro, Cariños para mi, Carrete/ Actividades, Comida/ Supermercado, Compras, Contabilización Prestamos, Farmacia, Gasto Departamento, Gasto Hormiga, Inversión, Mascota, Otros, Pago Comisiones Banco, Pago Cuotas Pendientes, Regalos, Ropa, Salud/ Médico / Espiritual, Suscripciones, Transporte, Vacaciones, Vida Sana';
 
 var currentFile = null;
 var currentBase64 = null;
 var extractedData = null;
 
 window.addEventListener('load', function() {
-  console.log('App cargada correctamente');
-
   var uploadZone = document.getElementById('upload-zone');
   var fileInput = document.getElementById('file-input');
   var previewImg = document.getElementById('preview-img');
@@ -164,9 +166,7 @@ window.addEventListener('load', function() {
   var successMsg = document.getElementById('success-msg');
   var errorMsg = document.getElementById('error-msg');
 
-  uploadZone.addEventListener('click', function() {
-    fileInput.click();
-  });
+  uploadZone.addEventListener('click', function() { fileInput.click(); });
 
   fileInput.addEventListener('change', function(e) {
     if (e.target.files[0]) loadFile(e.target.files[0]);
@@ -177,9 +177,7 @@ window.addEventListener('load', function() {
   });
 
   btnScan.addEventListener('click', function() {
-    console.log('Escanear clickeado');
     if (!currentFile) return;
-
     btnScan.disabled = true;
     btnScan.textContent = 'Analizando...';
     resultSection.style.display = 'none';
@@ -189,29 +187,30 @@ window.addEventListener('load', function() {
     var pagoMitad = toggleMitad.checked;
     var importeReal = pagoMitad ? document.getElementById('importe-real').value : '';
 
-    var bodyData = JSON.stringify({
-      imageBase64: currentBase64,
-      mimeType: currentFile.type,
-      pagoMitad: pagoMitad,
-      importeReal: importeReal,
-      soloExtraccion: true
-    });
+    var prompt = 'Analiza este comprobante de pago chileno y extrae los datos en JSON.\nResponde SOLO con JSON válido, sin markdown ni texto adicional.\n\nCategorías disponibles: ' + CATEGORIAS + '\n\nFormato exacto:\n{\n  "fecha": "DD/MM/YYYY",\n  "importe": 12990,\n  "descripcion": "Nombre del comercio",\n  "metodoPago": "Debito" o "Credito" o "Transferencia",\n  "banco": "Nombre del banco",\n  "categoria": "Una de las categorías"\n}\n\nPara metodoPago: débito o cuenta corriente = Debito, crédito = Credito, transferencia = Transferencia.';
 
-    fetch(SCRIPT_URL, {
+    fetch(GEMINI_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: bodyData
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{
+          parts: [
+            { text: prompt },
+            { inline_data: { mime_type: currentFile.type, data: currentBase64 } }
+          ]
+        }]
+      })
     })
     .then(function(res) { return res.json(); })
-    .then(function(json) {
-      console.log('Respuesta:', json);
-      if (!json.ok) throw new Error(json.error);
-      extractedData = json.datos;
+    .then(function(data) {
+      var rawText = data.candidates[0].content.parts[0].text;
+      var clean = rawText.replace(/```json|```/g, '').trim();
+      extractedData = JSON.parse(clean);
       renderResult(extractedData, pagoMitad, importeReal);
     })
     .catch(function(err) {
-      console.error('Error:', err);
-      errorMsg.textContent = 'Error: ' + err.message;
+      console.error(err);
+      errorMsg.textContent = 'Error al analizar: ' + err.message;
       errorMsg.style.display = 'block';
     })
     .finally(function() {
@@ -227,34 +226,29 @@ window.addEventListener('load', function() {
     successMsg.style.display = 'none';
     errorMsg.style.display = 'none';
 
-    var pagoMitad = toggleMitad.checked;
+    var metodo = extractedData.metodoPago || '';
+    var esDebitoOTransf = metodo === 'Debito' || metodo === 'Transferencia';
     var importeReal = document.getElementById('r-importe-real').value;
 
-    var payload = {
-      imageBase64: currentBase64,
-      mimeType: currentFile.type,
-      pagoMitad: pagoMitad,
+    var datos = {
+      fecha: document.getElementById('r-fecha').value,
+      importe: extractedData.importe,
+      descripcion: document.getElementById('r-descripcion').value,
+      metodoPago: metodo,
+      banco: document.getElementById('r-banco').value,
+      categoria: document.getElementById('r-categoria').value,
       importeReal: importeReal,
-      soloExtraccion: false,
-      datosConfirmados: {
-        fecha: document.getElementById('r-fecha').value,
-        importe: extractedData.importe,
-        descripcion: document.getElementById('r-descripcion').value,
-        metodoPago: extractedData.metodoPago,
-        banco: document.getElementById('r-banco').value,
-        categoria: document.getElementById('r-categoria').value,
-        importeReal: importeReal
-      }
+      pagadoTotal: esDebitoOTransf ? 'Si' : 'No',
+      pagadoGae: esDebitoOTransf ? 'Si' : 'No'
     };
 
     fetch(SCRIPT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({ datos: datos })
     })
     .then(function(res) { return res.json(); })
     .then(function(json) {
-      console.log('Registro:', json);
       if (!json.ok) throw new Error(json.error);
       successMsg.style.display = 'block';
       setTimeout(function() { resetForm(); }, 2500);
@@ -282,7 +276,6 @@ window.addEventListener('load', function() {
       uploadZone.style.display = 'none';
       currentBase64 = ev.target.result.split(',')[1];
       btnScan.disabled = false;
-      console.log('Imagen cargada, botón habilitado');
     };
     reader.readAsDataURL(file);
   }
@@ -311,9 +304,7 @@ window.addEventListener('load', function() {
   }
 
   function resetForm() {
-    currentFile = null;
-    currentBase64 = null;
-    extractedData = null;
+    currentFile = null; currentBase64 = null; extractedData = null;
     previewImg.style.display = 'none';
     uploadZone.style.display = 'block';
     btnScan.disabled = true;
