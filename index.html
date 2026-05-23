@@ -5,55 +5,46 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Registrar gasto</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f0; min-height: 100vh; padding: 20px 16px 40px; }
-  h1 { font-size: 18px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
-  .subtitle { font-size: 13px; color: #888; margin-bottom: 24px; }
-  .card { background: #fff; border-radius: 16px; border: 1px solid #e8e8e4; padding: 16px; margin-bottom: 16px; }
-  .upload-zone { border: 1.5px dashed #d0d0c8; border-radius: 12px; padding: 28px 16px; text-align: center; cursor: pointer; background: #fafaf8; }
-  .upload-zone i-icon { font-size: 28px; color: #aaa; margin-bottom: 8px; display: block; }
-  .upload-zone p { font-size: 14px; color: #888; }
-  .upload-zone span { font-size: 12px; color: #aaa; }
-  #preview-img { width: 100%; border-radius: 12px; display: none; max-height: 220px; object-fit: contain; background: #f5f5f0; }
-  label.field-label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #aaa; margin-bottom: 6px; margin-top: 14px; }
-  input[type=text], input[type=number], select {
-    width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #e0e0da;
-    font-size: 14px; color: #1a1a1a; background: #fafaf8; appearance: none;
-  }
-  input:focus, select:focus { outline: none; border-color: #b0b0a8; }
-  .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0ec; }
-  .toggle-row:last-child { border-bottom: none; }
-  .toggle-label { font-size: 14px; color: #1a1a1a; }
-  .toggle-sub { font-size: 12px; color: #aaa; }
-  .toggle { position: relative; width: 44px; height: 26px; flex-shrink: 0; }
-  .toggle input { opacity: 0; width: 0; height: 0; }
-  .slider { position: absolute; inset: 0; background: #ddd; border-radius: 26px; cursor: pointer; transition: 0.2s; }
-  .slider:before { content: ''; position: absolute; width: 20px; height: 20px; left: 3px; top: 3px; background: white; border-radius: 50%; transition: 0.2s; }
-  input:checked + .slider { background: #2d7a5a; }
-  input:checked + .slider:before { transform: translateX(18px); }
-  .mitad-section { display: none; margin-top: 12px; }
-  .btn-scan { width: 100%; padding: 14px; font-size: 15px; font-weight: 600; border-radius: 12px; border: none; background: #1a1a1a; color: #fff; cursor: pointer; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-  .btn-scan:disabled { opacity: 0.4; cursor: not-allowed; }
-  .btn-confirm { width: 100%; padding: 14px; font-size: 15px; font-weight: 600; border-radius: 12px; border: none; background: #2d7a5a; color: #fff; cursor: pointer; margin-top: 8px; }
-  .btn-secondary { width: 100%; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #e0e0da; background: #fff; color: #666; cursor: pointer; margin-top: 8px; }
-  .result-section { display: none; }
-  .field-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0ec; }
-  .field-row:last-child { border-bottom: none; }
-  .field-key { font-size: 13px; color: #888; }
-  .field-val { font-size: 14px; font-weight: 500; color: #1a1a1a; text-align: right; max-width: 60%; }
-  .field-val.editable { background: none; border: none; font-size: 14px; font-weight: 500; color: #1a1a1a; text-align: right; font-family: inherit; padding: 0; width: 160px; }
-  .field-val.editable:focus { outline: none; border-bottom: 1px solid #aaa; }
-  .amount-big { font-size: 26px; font-weight: 700; color: #1a1a1a; }
-  .tag { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; }
-  .tag.debito { background: #e1f5ee; color: #085041; }
-  .tag.credito { background: #faeeda; color: #633806; }
-  .tag.transferencia { background: #e6f1fb; color: #0c447c; }
-  .status-msg { text-align: center; padding: 12px; font-size: 14px; color: #666; }
-  .success-msg { background: #e1f5ee; color: #085041; border-radius: 12px; padding: 14px; text-align: center; font-weight: 500; display: none; margin-top: 12px; }
-  .error-msg { background: #fcebeb; color: #791f1f; border-radius: 12px; padding: 14px; font-size: 13px; display: none; margin-top: 12px; }
-  .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .categoria-select { margin-top: 4px; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f0; min-height: 100vh; padding: 20px 16px 40px; }
+h1 { font-size: 18px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+.subtitle { font-size: 13px; color: #888; margin-bottom: 24px; }
+.card { background: #fff; border-radius: 16px; border: 1px solid #e8e8e4; padding: 16px; margin-bottom: 16px; }
+.upload-zone { border: 1.5px dashed #d0d0c8; border-radius: 12px; padding: 28px 16px; text-align: center; cursor: pointer; background: #fafaf8; }
+.upload-zone p { font-size: 14px; color: #888; margin-bottom: 4px; }
+.upload-zone span { font-size: 12px; color: #aaa; }
+#preview-img { width: 100%; border-radius: 12px; display: none; max-height: 220px; object-fit: contain; background: #f5f5f0; }
+.field-label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #aaa; margin-bottom: 6px; margin-top: 14px; }
+.toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; }
+.toggle-label { font-size: 14px; color: #1a1a1a; }
+.toggle-sub { font-size: 12px; color: #aaa; }
+.toggle { position: relative; width: 44px; height: 26px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; inset: 0; background: #ddd; border-radius: 26px; cursor: pointer; transition: 0.2s; }
+.slider:before { content: ''; position: absolute; width: 20px; height: 20px; left: 3px; top: 3px; background: white; border-radius: 50%; transition: 0.2s; }
+input:checked + .slider { background: #2d7a5a; }
+input:checked + .slider:before { transform: translateX(18px); }
+.mitad-section { display: none; margin-top: 12px; }
+input[type=number] { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #e0e0da; font-size: 14px; color: #1a1a1a; background: #fafaf8; }
+.btn-scan { width: 100%; padding: 14px; font-size: 15px; font-weight: 600; border-radius: 12px; border: none; background: #1a1a1a; color: #fff; cursor: pointer; margin-top: 8px; }
+.btn-scan:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-confirm { width: 100%; padding: 14px; font-size: 15px; font-weight: 600; border-radius: 12px; border: none; background: #2d7a5a; color: #fff; cursor: pointer; margin-top: 8px; }
+.btn-secondary { width: 100%; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #e0e0da; background: #fff; color: #666; cursor: pointer; margin-top: 8px; }
+.result-section { display: none; }
+.field-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0ec; }
+.field-row:last-child { border-bottom: none; }
+.field-key { font-size: 13px; color: #888; }
+.field-val { font-size: 14px; font-weight: 500; color: #1a1a1a; text-align: right; }
+.field-editable { background: none; border: none; font-size: 14px; font-weight: 500; color: #1a1a1a; text-align: right; font-family: inherit; padding: 0; width: 160px; }
+.field-editable:focus { outline: none; border-bottom: 1px solid #aaa; }
+.amount-big { font-size: 26px; font-weight: 700; color: #1a1a1a; }
+.tag { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+.tag.debito { background: #e1f5ee; color: #085041; }
+.tag.credito { background: #faeeda; color: #633806; }
+.tag.transferencia { background: #e6f1fb; color: #0c447c; }
+.success-msg { background: #e1f5ee; color: #085041; border-radius: 12px; padding: 14px; text-align: center; font-weight: 500; display: none; margin-top: 12px; }
+.error-msg { background: #fcebeb; color: #791f1f; border-radius: 12px; padding: 14px; font-size: 13px; display: none; margin-top: 12px; }
+select { width: 160px; padding: 4px 8px; font-size: 13px; border-radius: 8px; border: 1px solid #e0e0da; background: #fafaf8; }
 </style>
 </head>
 <body>
@@ -65,12 +56,12 @@
   <div id="upload-zone" class="upload-zone">
     <p>📷 Sube el comprobante</p>
     <span>Toca para elegir una foto</span>
-    <input type="file" id="file-input" accept="image/*" style="display:none">
   </div>
+  <input type="file" id="file-input" accept="image/*" style="display:none">
   <img id="preview-img" alt="Comprobante">
 </div>
 
-<div class="card" id="options-card">
+<div class="card">
   <div class="toggle-row">
     <div>
       <div class="toggle-label">¿Pagaste a medias?</div>
@@ -87,23 +78,21 @@
   </div>
 </div>
 
-<button class="btn-scan" id="btn-scan" disabled>
-  Escanear comprobante
-</button>
+<button class="btn-scan" id="btn-scan" disabled>Escanear comprobante</button>
 
 <div class="result-section" id="result-section">
   <div class="card" style="margin-top:16px">
     <div style="margin-bottom:12px">
-      <div style="font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#aaa;margin-bottom:4px">Monto cobrado</div>
+      <div class="field-label">Monto cobrado</div>
       <div class="amount-big" id="r-importe">—</div>
     </div>
     <div class="field-row">
       <span class="field-key">Descripción</span>
-      <input class="field-val editable" id="r-descripcion" type="text">
+      <input class="field-editable" id="r-descripcion" type="text">
     </div>
     <div class="field-row">
       <span class="field-key">Fecha</span>
-      <input class="field-val editable" id="r-fecha" type="text">
+      <input class="field-editable" id="r-fecha" type="text">
     </div>
     <div class="field-row">
       <span class="field-key">Método de pago</span>
@@ -111,19 +100,19 @@
     </div>
     <div class="field-row">
       <span class="field-key">Banco</span>
-      <input class="field-val editable" id="r-banco" type="text">
+      <input class="field-editable" id="r-banco" type="text">
     </div>
     <div class="field-row">
       <span class="field-key">Importe real (tuyo)</span>
-      <input class="field-val editable" id="r-importe-real" type="number">
+      <input class="field-editable" id="r-importe-real" type="number">
     </div>
     <div class="field-row">
       <span class="field-key">Pagado total</span>
       <span class="field-val" id="r-pagado-total">—</span>
     </div>
-    <div class="field-row" style="border-bottom:none">
+    <div class="field-row">
       <span class="field-key">Categoría</span>
-      <select id="r-categoria" class="categoria-select" style="width:160px;padding:4px 8px;font-size:13px">
+      <select id="r-categoria">
         <option value="">— elegir —</option>
         <option>Ahorro</option>
         <option>Cariños para mi</option>
@@ -149,166 +138,192 @@
       </select>
     </div>
   </div>
-
-  <button class="btn-confirm" id="btn-confirm">Registrar en Google Sheets</button>
+  <button class="btn-confirm" id="btn-confirm">Registrar en AppSheet</button>
   <button class="btn-secondary" id="btn-retry">Volver a escanear</button>
   <div class="success-msg" id="success-msg">✓ Gasto registrado correctamente</div>
   <div class="error-msg" id="error-msg"></div>
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxMC2-Ew6IWpNPq53dVuGKdIGPp5oBvKyEcjtBE8JOrt2TpKG29uqo5psqrRR6J7-GZKQ/exec';
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxMC2-Ew6IWpNPq53dVuGKdIGPp5oBvKyEcjtBE8JOrt2TpKG29uqo5psqrRR6J7-GZKQ/exec';
 
-const uploadZone = document.getElementById('upload-zone');
-const fileInput = document.getElementById('file-input');
-const previewImg = document.getElementById('preview-img');
-const btnScan = document.getElementById('btn-scan');
-const toggleMitad = document.getElementById('toggle-mitad');
-const mitadSection = document.getElementById('mitad-section');
-const resultSection = document.getElementById('result-section');
-const successMsg = document.getElementById('success-msg');
-const errorMsg = document.getElementById('error-msg');
+var currentFile = null;
+var currentBase64 = null;
+var extractedData = null;
 
-let currentFile = null;
-let currentBase64 = null;
-let extractedData = null;
+window.addEventListener('load', function() {
+  console.log('App cargada correctamente');
 
-uploadZone.addEventListener('click', () => fileInput.click());
-fileInput.addEventListener('change', e => { if (e.target.files[0]) loadFile(e.target.files[0]); });
+  var uploadZone = document.getElementById('upload-zone');
+  var fileInput = document.getElementById('file-input');
+  var previewImg = document.getElementById('preview-img');
+  var btnScan = document.getElementById('btn-scan');
+  var toggleMitad = document.getElementById('toggle-mitad');
+  var mitadSection = document.getElementById('mitad-section');
+  var resultSection = document.getElementById('result-section');
+  var successMsg = document.getElementById('success-msg');
+  var errorMsg = document.getElementById('error-msg');
 
-function loadFile(file) {
-  currentFile = file;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    previewImg.src = ev.target.result;
-    previewImg.style.display = 'block';
-    uploadZone.style.display = 'none';
-    currentBase64 = ev.target.result.split(',')[1];
-    btnScan.disabled = false;
-  };
-  reader.readAsDataURL(file);
-}
+  uploadZone.addEventListener('click', function() {
+    fileInput.click();
+  });
 
-toggleMitad.addEventListener('change', () => {
-  mitadSection.style.display = toggleMitad.checked ? 'block' : 'none';
-});
+  fileInput.addEventListener('change', function(e) {
+    if (e.target.files[0]) loadFile(e.target.files[0]);
+  });
 
-btnScan.addEventListener('click', async () => {
-  btnScan.disabled = true;
-  btnScan.innerHTML = '<div class="spinner"></div> Analizando...';
-  resultSection.style.display = 'none';
-  successMsg.style.display = 'none';
-  errorMsg.style.display = 'none';
+  toggleMitad.addEventListener('change', function() {
+    mitadSection.style.display = toggleMitad.checked ? 'block' : 'none';
+  });
 
-  const pagoMitad = toggleMitad.checked;
-  const importeReal = pagoMitad ? document.getElementById('importe-real').value : '';
+  btnScan.addEventListener('click', function() {
+    console.log('Escanear clickeado');
+    if (!currentFile) return;
 
-  try {
-    const res = await fetch(SCRIPT_URL, {
+    btnScan.disabled = true;
+    btnScan.textContent = 'Analizando...';
+    resultSection.style.display = 'none';
+    successMsg.style.display = 'none';
+    errorMsg.style.display = 'none';
+
+    var pagoMitad = toggleMitad.checked;
+    var importeReal = pagoMitad ? document.getElementById('importe-real').value : '';
+
+    var bodyData = JSON.stringify({
+      imageBase64: currentBase64,
+      mimeType: currentFile.type,
+      pagoMitad: pagoMitad,
+      importeReal: importeReal,
+      soloExtraccion: true
+    });
+
+    fetch(SCRIPT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({
-        imageBase64: currentBase64,
-        mimeType: currentFile.type,
-        pagoMitad,
-        importeReal,
-        soloExtraccion: true
-      })
+      body: bodyData
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(json) {
+      console.log('Respuesta:', json);
+      if (!json.ok) throw new Error(json.error);
+      extractedData = json.datos;
+      renderResult(extractedData, pagoMitad, importeReal);
+    })
+    .catch(function(err) {
+      console.error('Error:', err);
+      errorMsg.textContent = 'Error: ' + err.message;
+      errorMsg.style.display = 'block';
+    })
+    .finally(function() {
+      btnScan.disabled = false;
+      btnScan.textContent = 'Escanear comprobante';
     });
-    const json = await res.json();
-    if (!json.ok) throw new Error(json.error);
-    extractedData = json.datos;
+  });
 
-    const metodo = extractedData.metodoPago || '';
-    const esDebitoOTransf = metodo === 'Debito' || metodo === 'Transferencia';
+  document.getElementById('btn-confirm').addEventListener('click', function() {
+    var btnConfirm = document.getElementById('btn-confirm');
+    btnConfirm.disabled = true;
+    btnConfirm.textContent = 'Registrando...';
+    successMsg.style.display = 'none';
+    errorMsg.style.display = 'none';
 
-    document.getElementById('r-importe').textContent = extractedData.importe
-      ? '$' + Number(extractedData.importe).toLocaleString('es-CL') : '—';
-    document.getElementById('r-descripcion').value = extractedData.descripcion || '';
-    document.getElementById('r-fecha').value = extractedData.fecha || '';
-    document.getElementById('r-banco').value = extractedData.banco || '';
+    var pagoMitad = toggleMitad.checked;
+    var importeReal = document.getElementById('r-importe-real').value;
 
-    const metodoEl = document.getElementById('r-metodo');
+    var payload = {
+      imageBase64: currentBase64,
+      mimeType: currentFile.type,
+      pagoMitad: pagoMitad,
+      importeReal: importeReal,
+      soloExtraccion: false,
+      datosConfirmados: {
+        fecha: document.getElementById('r-fecha').value,
+        importe: extractedData.importe,
+        descripcion: document.getElementById('r-descripcion').value,
+        metodoPago: extractedData.metodoPago,
+        banco: document.getElementById('r-banco').value,
+        categoria: document.getElementById('r-categoria').value,
+        importeReal: importeReal
+      }
+    };
+
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload)
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(json) {
+      console.log('Registro:', json);
+      if (!json.ok) throw new Error(json.error);
+      successMsg.style.display = 'block';
+      setTimeout(function() { resetForm(); }, 2500);
+    })
+    .catch(function(err) {
+      errorMsg.textContent = 'Error al registrar: ' + err.message;
+      errorMsg.style.display = 'block';
+    })
+    .finally(function() {
+      btnConfirm.disabled = false;
+      btnConfirm.textContent = 'Registrar en AppSheet';
+    });
+  });
+
+  document.getElementById('btn-retry').addEventListener('click', function() {
+    resultSection.style.display = 'none';
+  });
+
+  function loadFile(file) {
+    currentFile = file;
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      previewImg.src = ev.target.result;
+      previewImg.style.display = 'block';
+      uploadZone.style.display = 'none';
+      currentBase64 = ev.target.result.split(',')[1];
+      btnScan.disabled = false;
+      console.log('Imagen cargada, botón habilitado');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function renderResult(datos, pagoMitad, importeReal) {
+    var metodo = datos.metodoPago || '';
+    var esDebitoOTransf = metodo === 'Debito' || metodo === 'Transferencia';
+
+    document.getElementById('r-importe').textContent = datos.importe
+      ? '$' + Number(datos.importe).toLocaleString('es-CL') : '—';
+    document.getElementById('r-descripcion').value = datos.descripcion || '';
+    document.getElementById('r-fecha').value = datos.fecha || '';
+    document.getElementById('r-banco').value = datos.banco || '';
+
+    var metodoEl = document.getElementById('r-metodo');
     metodoEl.textContent = metodo || '—';
     metodoEl.className = 'field-val tag ' + metodo.toLowerCase();
 
-    const irVal = pagoMitad && importeReal ? importeReal : (extractedData.importe || '');
+    var irVal = pagoMitad && importeReal ? importeReal : (datos.importe || '');
     document.getElementById('r-importe-real').value = irVal;
     document.getElementById('r-pagado-total').textContent = esDebitoOTransf ? 'Sí' : 'No';
-
-    const catSelect = document.getElementById('r-categoria');
-    catSelect.value = extractedData.categoria || '';
+    document.getElementById('r-categoria').value = datos.categoria || '';
 
     resultSection.style.display = 'block';
     resultSection.scrollIntoView({ behavior: 'smooth' });
+  }
 
-  } catch (err) {
-    errorMsg.textContent = 'Error al analizar: ' + err.message;
-    errorMsg.style.display = 'block';
-  } finally {
-    btnScan.disabled = false;
-    btnScan.innerHTML = 'Escanear comprobante';
+  function resetForm() {
+    currentFile = null;
+    currentBase64 = null;
+    extractedData = null;
+    previewImg.style.display = 'none';
+    uploadZone.style.display = 'block';
+    btnScan.disabled = true;
+    resultSection.style.display = 'none';
+    successMsg.style.display = 'none';
+    toggleMitad.checked = false;
+    mitadSection.style.display = 'none';
+    fileInput.value = '';
   }
 });
-
-document.getElementById('btn-confirm').addEventListener('click', async () => {
-  const btnConfirm = document.getElementById('btn-confirm');
-  btnConfirm.disabled = true;
-  btnConfirm.textContent = 'Registrando...';
-  successMsg.style.display = 'none';
-  errorMsg.style.display = 'none';
-
-  const pagoMitad = toggleMitad.checked;
-  const importeReal = document.getElementById('r-importe-real').value;
-
-  const payload = {
-    imageBase64: currentBase64,
-    mimeType: currentFile.type,
-    pagoMitad,
-    importeReal,
-    soloExtraccion: false,
-    datosConfirmados: {
-      fecha: document.getElementById('r-fecha').value,
-      importe: extractedData.importe,
-      descripcion: document.getElementById('r-descripcion').value,
-      metodoPago: extractedData.metodoPago,
-      banco: document.getElementById('r-banco').value,
-      categoria: document.getElementById('r-categoria').value,
-      importeReal
-    }
-  };
-
-  try {
-    const res = await fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(payload) });
-    const json = await res.json();
-    if (!json.ok) throw new Error(json.error);
-    successMsg.style.display = 'block';
-    btnConfirm.textContent = 'Registrar en Google Sheets';
-    btnConfirm.disabled = false;
-    setTimeout(() => resetForm(), 2500);
-  } catch (err) {
-    errorMsg.textContent = 'Error al registrar: ' + err.message;
-    errorMsg.style.display = 'block';
-    btnConfirm.disabled = false;
-    btnConfirm.textContent = 'Registrar en Google Sheets';
-  }
-});
-
-document.getElementById('btn-retry').addEventListener('click', () => {
-  resultSection.style.display = 'none';
-});
-
-function resetForm() {
-  currentFile = null; currentBase64 = null; extractedData = null;
-  previewImg.style.display = 'none';
-  uploadZone.style.display = 'block';
-  btnScan.disabled = true;
-  resultSection.style.display = 'none';
-  successMsg.style.display = 'none';
-  toggleMitad.checked = false;
-  mitadSection.style.display = 'none';
-  fileInput.value = '';
-}
 </script>
 </body>
 </html>
